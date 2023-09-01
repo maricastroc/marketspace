@@ -11,7 +11,8 @@ import HomeSvg from '@assets/house-regular.svg'
 import AdsSvg from '@assets/tag-regular.svg'
 import SignOutSvg from '@assets/sign-out-regular.svg'
 
-import { SignIn } from '@screens/SignIn'
+import { useAuth } from '@hooks/useAuth'
+import { useState } from 'react'
 
 type SecondaryAppRoutes = {
   home: undefined
@@ -26,10 +27,18 @@ export type SecondaryAppNavigatorRoutesProps =
 
 export const AppRoutes = () => {
   const { sizes, colors } = useTheme()
+  const [isLoggingOut, setIsLoggingOut] = useState(true)
 
   const iconSize = sizes[6]
 
-  return (
+  const { signOut } = useAuth()
+
+  async function handleSignOut() {
+    await signOut()
+    setIsLoggingOut(false)
+  }
+
+  return isLoggingOut ? (
     <Navigator
       screenOptions={{
         headerShown: false,
@@ -74,13 +83,18 @@ export const AppRoutes = () => {
       />
       <Screen
         name="signout"
-        component={SignIn}
+        component={() => null}
         options={{
           tabBarIcon: ({ color }) => (
-            <SignOutSvg fill={color} width={iconSize} height={iconSize} />
+            <SignOutSvg
+              fill={color}
+              width={iconSize}
+              height={iconSize}
+              onPress={handleSignOut}
+            />
           ),
         }}
       />
     </Navigator>
-  )
+  ) : null
 }

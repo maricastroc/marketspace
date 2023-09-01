@@ -11,6 +11,7 @@ import { Loading } from '@components/Loading'
 import { SignIn } from '@screens/SignIn'
 import { SignUp } from '@screens/SignUp'
 import { Routes } from '@routes/index'
+import { AuthContextProvider } from '@contexts/AuthContext'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -21,7 +22,9 @@ export default function App() {
   return (
     <NativeBaseProvider theme={theme}>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
-      {fontsLoaded ? <Routes /> : <Loading />}
+      <AuthContextProvider>
+        {fontsLoaded ? <Routes /> : <Loading />}
+      </AuthContextProvider>
     </NativeBaseProvider>
   )
 }
