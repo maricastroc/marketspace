@@ -112,6 +112,16 @@ export function SignUp() {
     try {
       setIsLoading(true)
 
+      if (!userImageSelected.selected) {
+        setIsLoading(false)
+        return toast.show({
+          title: 'Please, choose a photo for your account.',
+          placement: 'top',
+          bgColor: 'red.300',
+          duration: 3000,
+        })
+      }
+
       const userImage = {
         ...userImageSelected.photo,
         name: `${name}.${userImageSelected.photo.name}`.toLowerCase(),

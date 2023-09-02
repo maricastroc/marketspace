@@ -1,15 +1,25 @@
-import { Button as ButtonNativeBase, IButtonProps, Text } from 'native-base'
+import {
+  Button as ButtonNativeBase,
+  HStack,
+  IButtonProps,
+  Icon,
+  Text,
+} from 'native-base'
+
+import { AntDesign } from '@expo/vector-icons'
 
 type Props = IButtonProps & {
   title: string
   variant?: 'primary' | 'secondary' | 'tertiary'
-  hasIcon?: boolean
+  iconName?: string
+  width?: string | number
 }
 
 export function Button({
   title,
   variant = 'primary',
-  hasIcon = false,
+  iconName = 'none',
+  width = 'full',
   ...rest
 }: Props) {
   let bgColor
@@ -40,7 +50,7 @@ export function Button({
 
   return (
     <ButtonNativeBase
-      w="full"
+      w={width}
       h={12}
       borderWidth={0}
       borderColor="transparent"
@@ -49,9 +59,14 @@ export function Button({
       _pressed={{ bg: bgHover }}
       {...rest}
     >
-      <Text fontFamily="heading" fontSize="sm" color={color}>
-        {title}
-      </Text>
+      <HStack alignItems="center">
+        {iconName !== 'none' && (
+          <Icon as={AntDesign} name={iconName} color={color} size={4} mr={2} />
+        )}
+        <Text fontFamily="heading" fontSize="sm" color={color}>
+          {title}
+        </Text>
+      </HStack>
     </ButtonNativeBase>
   )
 }
