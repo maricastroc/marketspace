@@ -12,6 +12,7 @@ import { SignIn } from '@screens/SignIn'
 import { SignUp } from '@screens/SignUp'
 import { Routes } from '@routes/index'
 import { AuthContextProvider } from '@contexts/AuthContext'
+import { CreateAd } from '@screens/CreateAd'
 
 export default function App() {
   const [fontsLoaded] = useFonts({

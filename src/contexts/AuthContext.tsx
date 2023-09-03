@@ -89,6 +89,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         title: 'User successfully logged out!',
         placement: 'top',
         bgColor: 'blue.500',
+        duration: 2000,
       })
     } catch (error) {
       throw error

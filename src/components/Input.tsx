@@ -2,16 +2,22 @@ import { FormControl, IInputProps, Input as NativeBaseInput } from 'native-base'
 
 type Props = IInputProps & {
   errorMessage?: string | null
+  bigSize?: boolean
 }
 
-export function Input({ errorMessage, isInvalid, ...rest }: Props) {
+export function Input({
+  errorMessage,
+  isInvalid,
+  bigSize = false,
+  ...rest
+}: Props) {
   const invalid = !!errorMessage || isInvalid
 
   return (
     <FormControl isInvalid={invalid} mb={4}>
       <NativeBaseInput
         bg="gray.100"
-        h={12}
+        h={bigSize ? 40 : 12}
         px={4}
         borderWidth={0}
         fontSize="md"
@@ -30,7 +36,7 @@ export function Input({ errorMessage, isInvalid, ...rest }: Props) {
         }}
         {...rest}
       />
-      <FormControl.ErrorMessage _text={{ color: 'red.300' }}>
+      <FormControl.ErrorMessage _text={{ color: 'red.300' }} mt={1}>
         {errorMessage}
       </FormControl.ErrorMessage>
     </FormControl>

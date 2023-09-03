@@ -1,9 +1,10 @@
-import { HStack, Heading, Icon, Text, VStack } from 'native-base'
-
-import { Feather } from '@expo/vector-icons'
+import { HStack, Heading, Text, VStack, useTheme } from 'native-base'
 import { TouchableOpacity } from 'react-native'
+import { Tag, ArrowRight } from 'phosphor-react-native'
 
 export function ActiveAdsCard() {
+  const { colors, sizes } = useTheme()
+
   return (
     <HStack
       w="full"
@@ -15,8 +16,8 @@ export function ActiveAdsCard() {
       borderRadius={8}
     >
       <HStack alignItems="center">
-        <Icon as={Feather} name="tag" color="blue.700" size={6} mr={4} />
-        <VStack>
+        <Tag color={colors.blue[700]} size={sizes[6]} />
+        <VStack ml={4}>
           <Heading fontSize="xl" fontFamily="heading" color="gray.600">
             4
           </Heading>
@@ -30,7 +31,7 @@ export function ActiveAdsCard() {
           <Text fontSize="sm" fontFamily="heading" color="blue.700" mr={2}>
             My ads
           </Text>
-          <Icon as={Feather} name="arrow-right" color="blue.700" size={4} />
+          <ArrowRight color={colors.blue[700]} size={sizes[4]} />
         </HStack>
       </TouchableOpacity>
     </HStack>

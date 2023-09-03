@@ -14,16 +14,16 @@ import SignOutSvg from '@assets/sign-out-regular.svg'
 import { useAuth } from '@hooks/useAuth'
 import { useState } from 'react'
 
-type SecondaryAppRoutes = {
+type AppRoutes = {
   home: undefined
   myads: undefined
+  createad: undefined
   signout: undefined
 }
 
-const { Navigator, Screen } = createBottomTabNavigator<SecondaryAppRoutes>()
+const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
 
-export type SecondaryAppNavigatorRoutesProps =
-  BottomTabNavigationProp<SecondaryAppRoutes>
+export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>
 
 export const AppRoutes = () => {
   const { sizes, colors } = useTheme()

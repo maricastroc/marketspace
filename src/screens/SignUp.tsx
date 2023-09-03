@@ -118,7 +118,7 @@ export function SignUp() {
           title: 'Please, choose a photo for your account.',
           placement: 'top',
           bgColor: 'red.300',
-          duration: 3000,
+          duration: 2000,
         })
       }
 
@@ -143,6 +143,7 @@ export function SignUp() {
         title: 'Account successfully created!',
         placement: 'top',
         bgColor: 'blue.500',
+        duration: 2000,
       })
     } catch (error) {
       const isAppError = error instanceof AppError
@@ -155,6 +156,7 @@ export function SignUp() {
         title,
         placement: 'top',
         bgColor: 'red.300',
+        duration: 2000,
       })
 
       setIsLoading(false)
@@ -188,6 +190,7 @@ export function SignUp() {
               title: 'This image is too big. Please, choose a photo up to 5MB.',
               placement: 'top',
               bgColor: 'red.300',
+              duration: 2000,
             })
           }
 
@@ -208,6 +211,7 @@ export function SignUp() {
             title: 'Photo successfuly updated!',
             placement: 'top',
             bgColor: 'blue.500',
+            duration: 2000,
           })
         }
       }

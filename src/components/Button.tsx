@@ -2,23 +2,22 @@ import {
   Button as ButtonNativeBase,
   HStack,
   IButtonProps,
-  Icon,
   Text,
 } from 'native-base'
 
-import { AntDesign } from '@expo/vector-icons'
+import { ReactNode } from 'react'
 
 type Props = IButtonProps & {
   title: string
   variant?: 'primary' | 'secondary' | 'tertiary'
-  iconName?: string
+  icon?: ReactNode
   width?: string | number
 }
 
 export function Button({
   title,
   variant = 'primary',
-  iconName = 'none',
+  icon,
   width = 'full',
   ...rest
 }: Props) {
@@ -60,10 +59,13 @@ export function Button({
       {...rest}
     >
       <HStack alignItems="center">
-        {iconName !== 'none' && (
-          <Icon as={AntDesign} name={iconName} color={color} size={4} mr={2} />
-        )}
-        <Text fontFamily="heading" fontSize="sm" color={color}>
+        {icon}
+        <Text
+          fontFamily="heading"
+          fontSize="sm"
+          color={color}
+          ml={icon ? 2 : 0}
+        >
           {title}
         </Text>
       </HStack>

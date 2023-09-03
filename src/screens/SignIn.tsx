@@ -2,16 +2,19 @@ import { Center, ScrollView, Text, VStack, useToast } from 'native-base'
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes'
-import * as yup from 'yup'
+import { useAuth } from '@hooks/useAuth'
+import { AppError } from '@utils/AppError'
+
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
+
 import LogoSvg from '@assets/logo.svg'
 import MarketspaceSvg from '@assets/marketspace_text.svg'
+
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
 import { PasswordInput } from '@components/PasswordInput'
-import { useAuth } from '@hooks/useAuth'
-import { AppError } from '@utils/AppError'
 
 const signInSchema = yup.object({
   email: yup.string().required('Please, inform your e-mail.'),
@@ -65,6 +68,7 @@ export function SignIn() {
         title,
         placement: 'top',
         bgColor: 'red.300',
+        duration: 2000,
       })
 
       setIsLoading(false)

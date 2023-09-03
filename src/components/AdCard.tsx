@@ -8,67 +8,132 @@ import {
   VStack,
   View,
 } from 'native-base'
-import Product_01 from '@assets/skateboard_01.jpg'
-import User_01 from '@assets/user_jack.jpg'
+import { capitalizeFirstLetter } from '@utils/capitalizeFirstLetter'
+import { formatPrice } from '@utils/formatPrice'
+import { useNavigation } from '@react-navigation/native'
+import { SecondaryAppNavigatorRoutesProps } from '@routes/secondaryAppRoutes'
+import { TouchableOpacity } from 'react-native'
 
 type Props = IStackProps & {
-  item: number
+  id: string
+  title: string
+  image: string
+  price: string
+  isActive: boolean
+  isNew: boolean
+  showProfile: boolean
+  profileImage: string
 }
 
-export function AdCard({ item, ...rest }: Props) {
+export function AdCard({
+  id,
+  title,
+  image,
+  price,
+  isActive = true,
+  isNew,
+  showProfile,
+  profileImage,
+  ...rest
+}: Props) {
+  const navigation = useNavigation<SecondaryAppNavigatorRoutesProps>()
+
+  function handleAdDetails() {
+    navigation.navigate('addetails', {
+      id,
+    })
+  }
+
   return (
     <VStack {...rest} width="48%">
-      <Box position="relative">
-        <Image
-          source={User_01}
-          w={8}
-          h={8}
-          alt=""
-          rounded="full"
-          borderWidth={1}
-          borderColor="gray.300"
-          position="absolute"
-          zIndex={100}
-          left={1}
-          top={1}
-        />
-        <View
-          px={2}
-          py={0.5}
-          position="absolute"
-          zIndex={100}
-          top={1}
-          right={2}
-          bgColor="blue.700"
-          borderRadius={12}
-        >
-          <Text
-            fontSize="xxs"
-            fontFamily="heading"
-            color="gray.100"
-            borderRadius={8}
+      <TouchableOpacity onPress={handleAdDetails}>
+        <Box position="relative">
+          {showProfile && isActive && (
+            <Image
+              h={8}
+              w={8}
+              source={{ uri: profileImage }}
+              alt={title}
+              borderRadius="full"
+              position="absolute"
+              zIndex={100}
+              left={1}
+              top={1}
+              borderWidth={1}
+              borderColor="gray.300"
+            />
+          )}
+          <View
+            px={2}
+            py={0.5}
+            position="absolute"
+            zIndex={100}
+            top={1}
+            right={2}
+            bgColor={isNew ? 'blue.500' : 'gray.300'}
+            borderRadius={12}
           >
-            USED
-          </Text>
-        </View>
-        <Image
-          source={Product_01}
-          h={26}
-          alt=""
-          resizeMode="cover"
-          borderRadius={10}
-        />
-      </Box>
+            <Text
+              fontSize="xxs"
+              fontFamily="heading"
+              color={isNew ? 'gray.100' : 'gray.600'}
+              borderRadius={8}
+            >
+              {isNew ? 'USED' : 'NEW'}
+            </Text>
+          </View>
+          <Image
+            source={{ uri: image }}
+            h={26}
+            alt=""
+            resizeMode="cover"
+            borderRadius={10}
+          />
+          {!isActive && (
+            <View
+              bg="rgba(0, 0, 0, 0.6)" // Adjust opacity as needed
+              position="absolute"
+              top={0}
+              left={0}
+              right={0}
+              bottom={0}
+              borderRadius={10}
+            />
+          )}
+          {!isActive && (
+            <Text
+              position="absolute"
+              top="80%"
+              left={2}
+              color="gray.100"
+              fontFamily="heading"
+              fontSize="xxs"
+            >
+              DEACTIVATED AD
+            </Text>
+          )}
+        </Box>
+      </TouchableOpacity>
       <VStack mt={1}>
-        <Text fontSize="sm" color="gray.600">
-          Red Shoes
+        <Text fontSize="sm" color={isActive ? 'gray.600' : 'gray.400'}>
+          {capitalizeFirstLetter(title)}
         </Text>
         <HStack alignItems="center">
-          <Text fontSize="xs" color="gray.600" fontFamily="heading" mr={1}>
+          <Text
+            fontSize="xs"
+            color={isActive ? 'gray.600' : 'gray.400'}
+            fontFamily="heading"
+            mr={1}
+          >
             $
           </Text>
-          <Heading fontSize="md" color="gray.600" fontFamily="heading" mt={-1}>
-            59.90
+          <Heading
+            fontSize="md"
+            color={isActive ? 'gray.600' : 'gray.400'}
+            fontFamily="heading"
+            mt={-1}
+          >
+            {formatPrice(parseFloat(price))}
           </Heading>
         </HStack>
       </VStack>
