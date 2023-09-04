@@ -1,7 +1,7 @@
 import { Heading, HStack, IStackProps, Text, VStack, View } from 'native-base'
-import { PaymentMethod } from './PaymentMethod'
 import { formatPrice } from '@utils/formatPrice'
 import { PaymentMethodDTO } from '@dtos/PaymentMethodDTO'
+import { PaymentMethod } from './PaymentMethod'
 
 type Props = IStackProps & {
   title: string

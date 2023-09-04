@@ -91,7 +91,7 @@ export function AdCard({
           />
           {!isActive && (
             <View
-              bg="rgba(0, 0, 0, 0.6)" // Adjust opacity as needed
+              bg="rgba(0, 0, 0, 0.6)"
               position="absolute"
               top={0}
               left={0}

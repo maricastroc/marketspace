@@ -1,34 +1,37 @@
-import { AdData } from '@components/AdData'
-import { AdHeader } from '@components/AdHeader'
-import { Avatar } from '@components/Avatar'
-import { Loading } from '@components/Loading'
-import { ProductDTO } from '@dtos/ProductDTO'
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native'
-import { SecondaryAppNavigatorRoutesProps } from '@routes/secondaryAppRoutes'
-import { api } from '@services/api'
-import { AppError } from '@utils/AppError'
-import { capitalizeFirstLetter } from '@utils/capitalizeFirstLetter'
 import {
   Center,
   HStack,
+  Heading,
   Image,
   ScrollView,
   Text,
   VStack,
+  useTheme,
   useToast,
 } from 'native-base'
 import { useEffect, useState } from 'react'
-import { Dimensions } from 'react-native'
+import { Dimensions, Linking } from 'react-native'
+import { useRoute } from '@react-navigation/native'
 import Carousel from 'react-native-reanimated-carousel'
+import { WhatsappLogo } from 'phosphor-react-native'
+
+import { ProductDTO } from '@dtos/ProductDTO'
+import { AppError } from '@utils/AppError'
+import { capitalizeFirstLetter } from '@utils/capitalizeFirstLetter'
+import { api } from '@services/api'
+import { formatPrice } from '@utils/formatPrice'
+
+import { AdData } from '@components/AdData'
+import { AdHeader } from '@components/AdHeader'
+import { Avatar } from '@components/Avatar'
+import { Loading } from '@components/Loading'
+import { Button } from '@components/Button'
 
 interface Props extends ProductDTO {
   user: {
     name: string
     avatar: string
+    tel: number
   }
 }
 
@@ -37,8 +40,6 @@ type RouteParams = {
 }
 
 export function AdDetails() {
-  const navigation = useNavigation<SecondaryAppNavigatorRoutesProps>()
-
   const route = useRoute()
 
   const width = Dimensions.get('window').width
@@ -47,11 +48,39 @@ export function AdDetails() {
 
   const [product, setProduct] = useState<Props | null>(null)
 
-  console.log(product?.payment_methods)
-
   const toast = useToast()
 
   const [isLoading, setIsLoading] = useState(false)
+
+  const { colors, sizes } = useTheme()
+
+  const handleGetInTouch = () => {
+    if (product && product.user && product?.user?.tel) {
+      const phoneNumber = product.user.tel
+      const whatsappLink = `whatsapp://send?phone=${phoneNumber}`
+
+      Linking.canOpenURL(whatsappLink)
+        .then((supported) => {
+          if (supported) {
+            return Linking.openURL(whatsappLink)
+          } else {
+            toast.show({
+              title: 'WhatsApp is not installed on your device.',
+              placement: 'top',
+              bgColor: 'red.300',
+            })
+          }
+        })
+        .catch((error) => {
+          console.error('Error opening WhatsApp:', error)
+          toast.show({
+            title: 'An error occurred while opening WhatsApp.',
+            placement: 'top',
+            bgColor: 'red.300',
+          })
+        })
+    }
+  }
 
   useEffect(() => {
     const loadData = async () => {
@@ -134,6 +163,28 @@ export function AdDetails() {
               />
             </VStack>
           </ScrollView>
+          <HStack
+            px={8}
+            py={6}
+            bgColor="gray.100"
+            justifyContent="space-between"
+          >
+            <HStack alignItems="center">
+              <Text fontSize="sm" color="blue.500" fontFamily="heading">
+                $
+              </Text>
+              <Heading fontSize="xxl" color="blue.500" fontFamily="heading">
+                {formatPrice(parseFloat(product.price))}
+              </Heading>
+            </HStack>
+            <Button
+              w={40}
+              title="Get in touch"
+              icon={<WhatsappLogo color={colors.gray[100]} size={sizes[4]} />}
+              onPress={handleGetInTouch}
+              isLoading={isLoading}
+            />
+          </HStack>
         </>
       ) : (
         <Center flex={1} justifyContent="center">
