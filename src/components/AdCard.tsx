@@ -23,6 +23,7 @@ type Props = IStackProps & {
   isNew: boolean
   showProfile: boolean
   profileImage: string
+  isFromLoggedUser?: boolean
 }
 
 export function AdCard({
@@ -32,8 +33,9 @@ export function AdCard({
   price,
   isActive = true,
   isNew,
-  showProfile,
+  showProfile = false,
   profileImage,
+  isFromLoggedUser = false,
   ...rest
 }: Props) {
   const navigation = useNavigation<SecondaryAppNavigatorRoutesProps>()
@@ -44,9 +46,17 @@ export function AdCard({
     })
   }
 
+  function handleMyAdDetails() {
+    navigation.navigate('myaddetails', {
+      id,
+    })
+  }
+
   return (
     <VStack {...rest} width="48%">
-      <TouchableOpacity onPress={handleAdDetails}>
+      <TouchableOpacity
+        onPress={isFromLoggedUser ? handleMyAdDetails : handleAdDetails}
+      >
         <Box position="relative">
           {showProfile && isActive && (
             <Image
@@ -79,7 +89,7 @@ export function AdCard({
               color={isNew ? 'gray.100' : 'gray.600'}
               borderRadius={8}
             >
-              {isNew ? 'USED' : 'NEW'}
+              {isNew ? 'NEW' : 'USED'}
             </Text>
           </View>
           <Image
@@ -109,13 +119,18 @@ export function AdCard({
               fontFamily="heading"
               fontSize="xxs"
             >
-              DEACTIVATED AD
+              INACTIVE AD
             </Text>
           )}
         </Box>
       </TouchableOpacity>
       <VStack mt={1}>
-        <Text fontSize="sm" color={isActive ? 'gray.600' : 'gray.400'}>
+        <Text
+          fontSize="sm"
+          color={isActive ? 'gray.600' : 'gray.400'}
+          lineHeight="xs"
+          my={1}
+        >
           {capitalizeFirstLetter(title)}
         </Text>
         <HStack alignItems="center">

@@ -12,7 +12,6 @@ import {
   removeStorageUser,
   saveStorageUser,
 } from '@storage/storageUser'
-import { useToast } from 'native-base'
 import { ReactNode, createContext, useEffect, useState } from 'react'
 
 export type AuthContextDataProps = {
@@ -33,8 +32,6 @@ export const AuthContext = createContext<AuthContextDataProps>(
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO)
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
-
-  const toast = useToast()
 
   async function saveStorageUserAndToken(
     userData: UserDTO,
@@ -84,13 +81,6 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
       await removeStorageAuthToken()
       await removeStorageUser()
-
-      toast.show({
-        title: 'User successfully logged out!',
-        placement: 'top',
-        bgColor: 'blue.500',
-        duration: 2000,
-      })
     } catch (error) {
       throw error
     } finally {

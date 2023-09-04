@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Center,
   FlatList,
@@ -27,7 +28,7 @@ import { AntDesign } from '@expo/vector-icons'
 
 import { Loading } from '@components/Loading'
 import { Checkbox } from '@components/Checkbox'
-import { ActiveAdsCard } from '@components/ActiveAdsCard'
+import { MyAdsCard } from '@components/MyAdsCard'
 import { AdCard } from '@components/AdCard'
 import { Avatar } from '@components/Avatar'
 import { Button } from '@components/Button'
@@ -47,7 +48,7 @@ const searchSchema = yup.object({
 })
 
 export function Home() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
 
   const { colors, sizes } = useTheme()
 
@@ -87,11 +88,11 @@ export function Home() {
     setShowFiltersModal(!showFiltersModal)
   }
 
-  const handleResetFilters = () => {
+  function handleResetFilters() {
     setFilters({
       ...filters,
       showNewProducts: true,
-      showAcceptTradeProducts: false,
+      showAcceptTradeProducts: true,
       paymentMethods: ['pix', 'bank slip', 'cash', 'deposit', 'card'],
     })
   }
@@ -111,6 +112,53 @@ export function Home() {
 
   function handleCreateAd() {
     navigation.navigate('createad')
+  }
+
+  async function handleApplyFilters({ search }: FormDataProps) {
+    setShowFiltersModal(false)
+
+    try {
+      let queryParams = ''
+
+      if (!filters.showAcceptTradeProducts) {
+        queryParams += '&accept_trade=false'
+      }
+
+      if (!filters.showNewProducts) {
+        queryParams += '&is_new=false'
+      }
+
+      filters.paymentMethods.forEach((item) => {
+        const encodedItem = encodeURIComponent(item)
+        queryParams += `&payment_methods=${encodedItem}`
+      })
+
+      if (search && search.length > 0) {
+        queryParams += `&query=${search}`
+      }
+
+      setIsLoadingSecondary(true)
+
+      const productsData = await api.get(`/products/?${queryParams}`)
+
+      setProducts(productsData.data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Unable to load products. Please, try again later.'
+
+      if (isAppError) {
+        toast.show({
+          title,
+          placement: 'top',
+          bgColor: 'red.300',
+          duration: 2000,
+        })
+      }
+    } finally {
+      setIsLoadingSecondary(false)
+    }
   }
 
   useFocusEffect(
@@ -134,11 +182,15 @@ export function Home() {
               placement: 'top',
               bgColor: 'red.300',
             })
+
+            signOut()
           }
         } finally {
           setIsLoading(false)
         }
       }
+
+      handleResetFilters()
 
       loadData()
     }, [toast]),
@@ -182,7 +234,7 @@ export function Home() {
             <Text color="gray.500" fontFamily="body" fontSize="sm" mb={3}>
               Your products advertised for sale
             </Text>
-            <ActiveAdsCard />
+            <MyAdsCard numberOfAds={numberOfAds} />
           </VStack>
           <VStack mt={8}>
             <Text color="gray.500" fontFamily="body" fontSize="sm" mb={3}>
@@ -213,12 +265,28 @@ export function Home() {
                       title={item.name}
                       image={`${api.defaults.baseURL}/images/${item.product_images[0].path}`}
                       isActive={item.is_active}
-                      isNew={!item.is_new}
+                      isNew={item.is_new}
                       price={item.price.toString()}
                       id={item.id}
                       showProfile
                       profileImage={`${api.defaults.baseURL}/images/${item.user?.avatar}`}
                     />
+                  )}
+                  ListEmptyComponent={() => (
+                    <Center>
+                      {filters.showNewProducts &&
+                      filters.showAcceptTradeProducts &&
+                      filters.paymentMethods.length === 5 ? (
+                        <Text color="gray.600" textAlign="center">
+                          It looks like no products have been announced yet!
+                        </Text>
+                      ) : (
+                        <Text color="gray.600" textAlign="center">
+                          It looks like no products with these filters have been
+                          announced yet!
+                        </Text>
+                      )}
+                    </Center>
                   )}
                 />
               )}
@@ -407,8 +475,14 @@ export function Home() {
                 title="Reset Filters"
                 w="47%"
                 onPress={handleResetFilters}
+                isLoading={isLoading}
               />
-              <Button title="Apply Filters" w="47%" />
+              <Button
+                title="Apply Filters"
+                w="47%"
+                onPress={handleSubmit(handleApplyFilters)}
+                isLoading={isLoading}
+              />
             </HStack>
           </Modal.Footer>
         </Modal.Content>
