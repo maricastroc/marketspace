@@ -14,7 +14,7 @@ export function MyAdsCard({ numberOfAds }: Props) {
   const navigation = useNavigation<SecondaryAppNavigatorRoutesProps>()
 
   function handleMyAds() {
-    navigation.navigate('myads')
+    navigation.navigate('app', { screen: 'myads' })
   }
 
   return (

@@ -76,6 +76,7 @@ export function Home() {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormDataProps>({
     defaultValues: {
@@ -89,6 +90,7 @@ export function Home() {
   }
 
   function handleResetFilters() {
+    reset()
     setFilters({
       ...filters,
       showNewProducts: true,
@@ -168,8 +170,14 @@ export function Home() {
           const productsData = await api.get(`/users/products`)
           const generalProductsData = await api.get('/products')
 
+          const filteredProductsData = productsData.data.filter(
+            (product: ProductDTO) => {
+              return product.is_active === true
+            },
+          )
+
           setProducts(generalProductsData.data)
-          setNumberOfAds(productsData.data.length)
+          setNumberOfAds(filteredProductsData.length)
         } catch (error) {
           const isAppError = error instanceof AppError
           const title = isAppError
@@ -244,10 +252,11 @@ export function Home() {
               control={control}
               errorMessage={errors.search?.message}
               showFiltersModal={handleSetShowFiltersModal}
+              onSearch={handleSubmit(handleApplyFilters)}
             />
           </VStack>
-          <ScrollView pb={64} showsVerticalScrollIndicator={false}>
-            <VStack pb={64}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <VStack pb={80}>
               {isLoadingSecondary ? (
                 <Center flex={1} justifyContent="center">
                   <Loading />

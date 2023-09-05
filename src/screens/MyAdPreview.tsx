@@ -127,8 +127,6 @@ export function MyAdPreview() {
     }
   }
 
-  console.log(paymentMethods)
-
   return (
     <VStack bgColor="gray.200" flex={1}>
       <Center h={32} bgColor="blue.500">

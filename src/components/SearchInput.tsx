@@ -9,12 +9,14 @@ type Props = {
   control: any
   errorMessage: string | undefined
   showFiltersModal: () => void
+  onSearch: () => void
 }
 
 export function SearchInput({
   control,
   errorMessage,
   showFiltersModal,
+  onSearch,
 }: Props) {
   return (
     <HStack position="relative">
@@ -37,16 +39,13 @@ export function SearchInput({
         alignItems="center"
         zIndex={100}
       >
-        <Button bgColor="transparent" padding={0}>
+        <Button bgColor="transparent" padding={0} onPress={onSearch}>
           <Icon
             as={Feather}
             name="search"
             color="gray.600"
             size={6}
             zIndex={100}
-            onPress={() => {
-              console.log('hey')
-            }}
           />
         </Button>
         <View w="0.4" h={6} bgColor="gray.500" mx={3} />

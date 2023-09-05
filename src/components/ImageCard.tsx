@@ -9,7 +9,12 @@ type Props = IStackProps & {
   showDeleteOption?: boolean
 }
 
-export function ImageCard({ source, uri, onDelete, showDeleteOption }: Props) {
+export function ImageCard({
+  source,
+  uri,
+  onDelete,
+  showDeleteOption = true,
+}: Props) {
   function handleDeleteImage() {
     if (onDelete) {
       onDelete(uri)

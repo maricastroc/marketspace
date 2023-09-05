@@ -166,13 +166,6 @@ export function CreateAd() {
         setImages((images) => {
           return [...images, photoFile]
         })
-
-        toast.show({
-          title: 'Photo successfuly updated!',
-          placement: 'top',
-          bgColor: 'blue.500',
-          duration: 2000,
-        })
       }
     } catch (error) {
       const isAppError = error instanceof AppError

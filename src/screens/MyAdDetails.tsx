@@ -7,6 +7,7 @@ import {
   ScrollView,
   Text,
   VStack,
+  View,
   useTheme,
   useToast,
 } from 'native-base'
@@ -65,13 +66,52 @@ export function MyAdDetails() {
 
   const [isDeletingLoading, setIsDeletingLoading] = useState(false)
 
+  const [isActive, setIsActive] = useState<boolean>()
+
+  const [showModalAdStatus, setShowModalAdStatus] = useState(false)
+
   const { colors, sizes } = useTheme()
 
   function handleGoBack() {
     navigation.goBack()
   }
 
-  console.log(product?.product_images)
+  async function handleEditAdStatus() {
+    setIsActive(!isActive)
+    setIsLoading(true)
+
+    try {
+      await api.patch(`/products/${id}`, {
+        is_active: !isActive,
+      })
+
+      toast.show({
+        title: 'Product successfully updated!',
+        placement: 'top',
+        bgColor: 'blue.500',
+        duration: 2000,
+      })
+
+      navigation.navigate('app', { screen: 'home' })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Unable to update ad. Please, try again later.'
+
+      if (isAppError) {
+        toast.show({
+          title,
+          placement: 'top',
+          bgColor: 'red.300',
+          duration: 2000,
+        })
+      }
+    } finally {
+      setIsLoading(false)
+      setShowModalAdStatus(false)
+    }
+  }
 
   function handleEditAd() {
     product &&
@@ -123,6 +163,7 @@ export function MyAdDetails() {
         const productData = await api.get(`products/${id}`)
 
         setProduct(productData.data)
+        setIsActive(productData.data.is_active)
       } catch (error) {
         const isAppError = error instanceof AppError
         const title = isAppError
@@ -168,23 +209,51 @@ export function MyAdDetails() {
               loop
               width={width}
               height={280}
-              autoPlay={product.product_images.length > 1}
+              autoPlay={product.product_images.length > 1 && product.is_active}
               data={product?.product_images}
               scrollAnimationDuration={3000}
               renderItem={({ item }) => (
-                <Image
-                  w="full"
-                  h={80}
-                  source={{
-                    uri: item.uri
-                      ? item.uri
-                      : `${api.defaults.baseURL}/images/${item.path}`,
-                  }}
-                  alt="Ad Image"
-                  resizeMode="cover"
-                  borderColor="gray.400"
-                  borderWidth={1}
-                />
+                <>
+                  {!product.is_active && (
+                    <Text
+                      position="absolute"
+                      fontSize="lg"
+                      zIndex={100}
+                      top="50%"
+                      left="35%"
+                      fontFamily="heading"
+                      color="gray.100"
+                    >
+                      INACTIVATED AD
+                    </Text>
+                  )}
+                  <Image
+                    w="full"
+                    h={80}
+                    source={{
+                      uri: item.uri
+                        ? item.uri
+                        : `${api.defaults.baseURL}/images/${item.path}`,
+                    }}
+                    alt="Ad Image"
+                    resizeMode="cover"
+                    borderColor="gray.400"
+                    borderWidth={1}
+                    blurRadius={product.is_active ? 0 : 2}
+                  />
+                  {!product.is_active && (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Aqui você define a cor de filtro escuro
+                      }}
+                    />
+                  )}
+                </>
               )}
             />
           </VStack>
@@ -219,6 +288,7 @@ export function MyAdDetails() {
                   title="Deactivate ad"
                   icon={<Power color={colors.gray[100]} size={sizes[4]} />}
                   isLoading={isLoading}
+                  onPress={() => setShowModalAdStatus(true)}
                 />
               ) : (
                 <Button
@@ -227,6 +297,7 @@ export function MyAdDetails() {
                   title="Activate ad"
                   icon={<Power color={colors.gray[100]} size={sizes[4]} />}
                   isLoading={isLoading}
+                  onPress={() => setShowModalAdStatus(true)}
                 />
               )}
               <Button
@@ -261,6 +332,33 @@ export function MyAdDetails() {
                     mt={3}
                     variant="secondary"
                     onPress={() => setShowRemoveModal(false)}
+                  />
+                </VStack>
+              </Center>
+            </Modal.Content>
+          </Modal>
+          <Modal
+            isOpen={showModalAdStatus}
+            onClose={() => setShowModalAdStatus(false)}
+            size="md"
+          >
+            <Modal.Content px={5} py={6}>
+              <Center>
+                <Heading fontSize="lg" fontFamily="heading">
+                  {product.is_active ? 'Inactivate Ad' : 'Activate Ad'}
+                </Heading>
+                <Text fontSize="md" mt={2} lineHeight="sm">
+                  {`Are you sure you want to ${
+                    product.is_active ? 'inactivate' : 'activate'
+                  } this ad?`}
+                </Text>
+                <VStack w="full" mt={6}>
+                  <Button title="Yes, go ahead!" onPress={handleEditAdStatus} />
+                  <Button
+                    title="No, take me back!"
+                    mt={3}
+                    variant="secondary"
+                    onPress={() => setShowModalAdStatus(false)}
                   />
                 </VStack>
               </Center>

@@ -206,13 +206,6 @@ export function SignUp() {
             selected: true,
             photo: { ...photoFile },
           })
-
-          toast.show({
-            title: 'Photo successfuly updated!',
-            placement: 'top',
-            bgColor: 'blue.500',
-            duration: 2000,
-          })
         }
       }
     } catch (error) {

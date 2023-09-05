@@ -40,8 +40,6 @@ export function AdCard({
 }: Props) {
   const navigation = useNavigation<SecondaryAppNavigatorRoutesProps>()
 
-  console.log(image)
-
   function handleAdDetails() {
     navigation.navigate('addetails', {
       id,
@@ -55,7 +53,7 @@ export function AdCard({
   }
 
   return (
-    <VStack {...rest} width="48%">
+    <VStack {...rest} width="48%" mb={4}>
       <TouchableOpacity
         onPress={isFromLoggedUser ? handleMyAdDetails : handleAdDetails}
       >

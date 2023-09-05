@@ -1,7 +1,7 @@
 export function formatPrice(value: string) {
   const priceNumber =
     typeof value === 'string'
-      ? parseFloat(value.replace(',', '.'))
+      ? parseFloat(value.replace(',', ' '))
       : parseFloat(value)
 
   const formattedNumber = priceNumber.toLocaleString('en-US', {

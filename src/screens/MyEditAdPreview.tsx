@@ -70,8 +70,6 @@ export function MyEditAdPreview() {
     navigation.goBack()
   }
 
-  console.log(price)
-
   const handlePublish = async () => {
     setIsLoading(true)
 

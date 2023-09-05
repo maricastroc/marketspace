@@ -152,18 +152,18 @@ export function MyAds() {
                 ListEmptyComponent={() => (
                   <Center flex={1}>
                     {adType === 'all' && (
-                      <Text color="gray.300" textAlign="center">
+                      <Text color="gray.500" textAlign="center">
                         You haven&apos;t created any ads yet. {'\n'}
                         Click + to create your first one!
                       </Text>
                     )}
                     {adType === 'active' && (
-                      <Text color="gray.300" textAlign="center">
+                      <Text color="gray.500" textAlign="center">
                         You have no active product!
                       </Text>
                     )}
                     {adType === 'inactive' && (
-                      <Text color="gray.300" textAlign="center">
+                      <Text color="gray.500" textAlign="center">
                         You have no inactive product!
                       </Text>
                     )}
