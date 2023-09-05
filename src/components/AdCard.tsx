@@ -40,6 +40,8 @@ export function AdCard({
 }: Props) {
   const navigation = useNavigation<SecondaryAppNavigatorRoutesProps>()
 
+  console.log(image)
+
   function handleAdDetails() {
     navigation.navigate('addetails', {
       id,
@@ -146,9 +148,8 @@ export function AdCard({
             fontSize="md"
             color={isActive ? 'gray.600' : 'gray.400'}
             fontFamily="heading"
-            mt={-1}
           >
-            {formatPrice(parseFloat(price))}
+            {formatPrice(price)}
           </Heading>
         </HStack>
       </VStack>

@@ -5,12 +5,15 @@ import { AntDesign } from '@expo/vector-icons'
 type Props = IStackProps & {
   source: any
   uri: string
-  onDelete: (uri: string) => void
+  onDelete?: (uri: string) => void
+  showDeleteOption?: boolean
 }
 
-export function ImageCard({ source, uri, onDelete }: Props) {
+export function ImageCard({ source, uri, onDelete, showDeleteOption }: Props) {
   function handleDeleteImage() {
-    onDelete(uri)
+    if (onDelete) {
+      onDelete(uri)
+    }
   }
 
   return (
@@ -23,26 +26,28 @@ export function ImageCard({ source, uri, onDelete }: Props) {
         resizeMode="cover"
         borderRadius={10}
       />
-      <View
-        justifyContent="center"
-        alignItems="center"
-        bgColor="gray.700"
-        w={4}
-        h={4}
-        borderRadius="full"
-        position="absolute"
-        zIndex={100}
-        bottom={20}
-        left={20}
-      >
-        <Icon
-          as={AntDesign}
-          name="close"
-          color="gray.100"
-          size={3}
-          onPress={() => handleDeleteImage()}
-        />
-      </View>
+      {showDeleteOption && (
+        <View
+          justifyContent="center"
+          alignItems="center"
+          bgColor="gray.700"
+          w={4}
+          h={4}
+          borderRadius="full"
+          position="absolute"
+          zIndex={100}
+          bottom={20}
+          left={20}
+        >
+          <Icon
+            as={AntDesign}
+            name="close"
+            color="gray.100"
+            size={3}
+            onPress={() => handleDeleteImage()}
+          />
+        </View>
+      )}
     </View>
   )
 }

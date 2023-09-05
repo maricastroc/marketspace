@@ -30,6 +30,7 @@ import { Avatar } from '@components/Avatar'
 import { PaymentMethodDTO } from '@dtos/PaymentMethodDTO'
 
 type RouteParams = {
+  id: string
   title: string
   description: string
   price: string
@@ -39,7 +40,7 @@ type RouteParams = {
   acceptTrade: boolean
 }
 
-export function MyAdPreview() {
+export function MyEditAdPreview() {
   const [isLoading, setIsLoading] = useState(false)
 
   const width = Dimensions.get('window').width
@@ -58,6 +59,7 @@ export function MyAdPreview() {
     title,
     description,
     price,
+    id,
     images,
     paymentMethods,
     isNew,
@@ -68,11 +70,13 @@ export function MyAdPreview() {
     navigation.goBack()
   }
 
+  console.log(price)
+
   const handlePublish = async () => {
     setIsLoading(true)
 
     try {
-      const product = await api.post('/products', {
+      await api.put(`/products/${id}`, {
         name: title,
         description,
         price: parseFloat(price.replace(/[^0-9,.]/g, '')),
@@ -81,27 +85,8 @@ export function MyAdPreview() {
         accept_trade: acceptTrade,
       })
 
-      const imageData = new FormData()
-
-      images.forEach((item) => {
-        const imageFile = {
-          ...item,
-          name: user.name + '.' + item?.name,
-        } as any
-
-        imageData.append('images', imageFile)
-      })
-
-      imageData.append('product_id', product.data.id)
-
-      await api.post('/products/images', imageData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-
       toast.show({
-        title: 'Product successfully published!',
+        title: 'Product successfully updated!',
         placement: 'top',
         bgColor: 'blue.500',
         duration: 2000,
@@ -112,7 +97,7 @@ export function MyAdPreview() {
       const isAppError = error instanceof AppError
       const title = isAppError
         ? error.message
-        : 'Unable to publish ad. Please, try again later.'
+        : 'Unable to update ad. Please, try again later.'
 
       if (isAppError) {
         toast.show({
@@ -126,8 +111,6 @@ export function MyAdPreview() {
       setIsLoading(false)
     }
   }
-
-  console.log(paymentMethods)
 
   return (
     <VStack bgColor="gray.200" flex={1}>

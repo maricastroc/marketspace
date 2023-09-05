@@ -174,7 +174,7 @@ export function AdDetails() {
                 $
               </Text>
               <Heading fontSize="xxl" color="blue.500" fontFamily="heading">
-                {formatPrice(parseFloat(product.price))}
+                {formatPrice(product.price)}
               </Heading>
             </HStack>
             <Button

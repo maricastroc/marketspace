@@ -1,7 +1,9 @@
 import {
   Center,
   HStack,
+  Heading,
   Image,
+  Modal,
   ScrollView,
   Text,
   VStack,
@@ -29,8 +31,10 @@ import { AdData } from '@components/AdData'
 import { Avatar } from '@components/Avatar'
 import { Loading } from '@components/Loading'
 import { Button } from '@components/Button'
+import { SecondaryAppNavigatorRoutesProps } from '@routes/secondaryAppRoutes'
 
 interface Props extends ProductDTO {
+  id: string
   user: {
     name: string
     avatar: string
@@ -55,12 +59,62 @@ export function MyAdDetails() {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const navigation = useNavigation()
+  const navigation = useNavigation<SecondaryAppNavigatorRoutesProps>()
+
+  const [showRemoveModal, setShowRemoveModal] = useState(false)
+
+  const [isDeletingLoading, setIsDeletingLoading] = useState(false)
 
   const { colors, sizes } = useTheme()
 
   function handleGoBack() {
     navigation.goBack()
+  }
+
+  console.log(product?.product_images)
+
+  function handleEditAd() {
+    product &&
+      navigation.navigate('editad', {
+        title: product.name,
+        description: product.description,
+        price: product.price.toString(),
+        images: product.product_images,
+        paymentMethods: product.payment_methods.map((item) => item.key),
+        isNew: product.is_new,
+        acceptTrade: product.accept_trade,
+        id: product.id,
+      })
+  }
+
+  const handleDeleteAd = async () => {
+    try {
+      setIsDeletingLoading(true)
+      await api.delete(`products/${id}`)
+
+      navigation.navigate('app', { screen: 'myads' })
+
+      toast.show({
+        title: 'Ad successfully deleted!',
+        placement: 'top',
+        bgColor: 'red.300',
+        duration: 2000,
+      })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Unable to delete ad. Please, try again later.'
+
+      if (isAppError) {
+        toast.show({
+          title,
+          placement: 'top',
+          bgColor: 'red.300',
+          duration: 2000,
+        })
+      }
+    }
   }
 
   useEffect(() => {
@@ -105,7 +159,7 @@ export function MyAdDetails() {
             <TouchableOpacity onPress={handleGoBack}>
               <ArrowLeft size={sizes[6]} color={colors.gray[700]} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleEditAd}>
               <PencilSimpleLine size={sizes[6]} color={colors.gray[700]} />
             </TouchableOpacity>
           </HStack>
@@ -181,10 +235,37 @@ export function MyAdDetails() {
                 w="full"
                 title="Delete Ad"
                 icon={<TrashSimple color={colors.gray[600]} size={sizes[4]} />}
-                isLoading={isLoading}
+                onPress={() => setShowRemoveModal(true)}
+                isLoading={isDeletingLoading || isLoading}
               />
             </VStack>
           </ScrollView>
+          <Modal
+            isOpen={showRemoveModal}
+            onClose={() => setShowRemoveModal(false)}
+            size="md"
+          >
+            <Modal.Content px={5} py={6}>
+              <Center>
+                <Heading fontSize="lg" fontFamily="heading">
+                  Delete Ad
+                </Heading>
+                <Text fontSize="md" mt={2} lineHeight="sm">
+                  Are you sure you want to delete this ad? This action cannot be
+                  undone!
+                </Text>
+                <VStack w="full" mt={6}>
+                  <Button title="Yes, delete it!" onPress={handleDeleteAd} />
+                  <Button
+                    title="No, take me back!"
+                    mt={3}
+                    variant="secondary"
+                    onPress={() => setShowRemoveModal(false)}
+                  />
+                </VStack>
+              </Center>
+            </Modal.Content>
+          </Modal>
         </>
       ) : (
         <Center flex={1} justifyContent="center">

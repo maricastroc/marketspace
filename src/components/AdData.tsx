@@ -49,7 +49,7 @@ export function AdData({
               $
             </Text>
             <Heading color="blue.500" fontSize="xl" fontFamily="heading">
-              {formatPrice(parseFloat(price))}
+              {formatPrice(price)}
             </Heading>
           </HStack>
         </HStack>
@@ -72,7 +72,12 @@ export function AdData({
           </Heading>
           <VStack mt={2}>
             {paymentMethods.map((method) => {
-              return <PaymentMethod key={method.key} name={method.name} />
+              return (
+                <PaymentMethod
+                  key={method.key || (method as unknown as string)}
+                  name={method?.name || (method as unknown as string)}
+                />
+              )
             })}
           </VStack>
         </VStack>
